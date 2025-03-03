@@ -1,0 +1,124 @@
+import discord
+import random
+
+# Replace 'YOUR_BOT_TOKEN' with your actual bot token
+TOKEN = 'YOUR_BOT_TOKEN'
+
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
+
+provinces_capitals = {
+    "Abra": "Bangued",
+    "Agusan del Norte": "Cabadbaran",
+    "Agusan del Sur": "Prosperidad",
+    "Aklan": "Kalibo",
+    "Albay": "Legazpi",
+    "Antique": "San Jose de Buenavista",
+    "Apayao": "Kabugao",
+    "Aurora": "Baler",
+    "Basilan": "Isabela City",
+    "Bataan": "Balanga",
+    "Batanes": "Basco",
+    "Batangas": "Batangas City",
+    "Benguet": "La Trinidad",
+    "Biliran": "Naval",
+    "Bohol": "Tagbilaran",
+    "Bukidnon": "Malaybalay",
+    "Bulacan": "Malolos",
+    "Cagayan": "Tuguegarao",
+    "Camarines Norte": "Daet",
+    "Camarines Sur": "Pili",
+    "Camiguin": "Mambajao",
+    "Capiz": "Roxas City",
+    "Catanduanes": "Virac",
+    "Cavite": "Imus",
+    "Cebu": "Cebu City",
+    "Cotabato": "Kidapawan",
+    "Davao de Oro": "Nabunturan",
+    "Davao del Norte": "Tagum",
+    "Davao del Sur": "Digos",
+    "Davao Occidental": "Malita",
+    "Davao Oriental": "Mati",
+    "Dinagat Islands": "San Jose",
+    "Eastern Samar": "Borongan",
+    "Guimaras": "Jordan",
+    "Ifugao": "Lagawe",
+    "Ilocos Norte": "Laoag",
+    "Ilocos Sur": "Vigan",
+    "Iloilo": "Iloilo City",
+    "Isabela": "Ilagan",
+    "Kalinga": "Tabuk",
+    "La Union": "San Fernando",
+    "Laguna": "Santa Cruz",
+    "Lanao del Norte": "Tubod",
+    "Lanao del Sur": "Marawi",
+    "Leyte": "Tacloban",
+    "Maguindanao del Norte": "Parang",
+    "Maguindanao del Sur": "Buluan",
+    "Marinduque": "Boac",
+    "Masbate": "Masbate City",
+    "Metro Manila": "Manila",
+    "Misamis Occidental": "Oroquieta",
+    "Misamis Oriental": "Cagayan de Oro",
+    "Mountain Province": "Bontoc",
+    "Negros Occidental": "Bacolod",
+    "Negros Oriental": "Dumaguete",
+    "Northern Samar": "Catarman",
+    "Nueva Ecija": "Palayan",
+    "Nueva Vizcaya": "Bayombong",
+    "Occidental Mindoro": "Mamburao",
+    "Oriental Mindoro": "Calapan",
+    "Palawan": "Puerto Princesa",
+    "Pampanga": "San Fernando",
+    "Pangasinan": "Lingayen",
+    "Quezon": "Lucena",
+    "Rizal": "Antipolo",
+    "Romblon": "Romblon",
+    "Samar": "Catbalogan",
+    "Sarangani": "Alabel",
+    "Siquijor": "Siquijor",
+    "Sorsogon": "Sorsogon City",
+    "South Cotabato": "Koronadal",
+    "Southern Leyte": "Maasin",
+    "Sultan Kudarat": "Isulan",
+    "Sulu": "Jolo",
+    "Surigao del Norte": "Surigao City",
+    "Surigao del Sur": "Tandag",
+    "Tarlac": "Tarlac City",
+    "Tawi-Tawi": "Bongao",
+    "Zambales": "Iba",
+    "Zamboanga del Norte": "Dipolog",
+    "Zamboanga del Sur": "Pagadian",
+    "Zamboanga Sibugay": "Ipil"
+}
+
+current_question = None
+
+@client.event
+async def on_ready():
+    print(f'Logged in as {client.user}')
+
+@client.event
+async def on_message(message):
+    global current_question
+
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('!quiz'):
+        province = random.choice(list(provinces_capitals.keys()))
+        current_question = province
+        await message.channel.send(f"What is the capital of {province}?")
+
+    elif current_question:
+        user_answer = message.content.strip().lower()
+        correct_answer = provinces_capitals[current_question].lower()
+
+        if user_answer == correct_answer:
+            await message.channel.send("Correct!")
+        else:
+            await message.channel.send(f"Incorrect. The correct answer is **{provinces_capitals[current_question]}**.", embeds=[discord.Embed(description=" ", color=0xFF0000)])
+        current_question = None
+
+client.run(TOKEN)
